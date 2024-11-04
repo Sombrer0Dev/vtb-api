@@ -4,9 +4,15 @@ on: [push]
 
 
 jobs:
-  formatter:
+  set-up:
     runs-on: self-hosted
     steps:
       - name: install deno
         uses: denoland/setup-deno@v2
-      - run: deno fmt
+      - name: checkout repo
+        run: actions/checkout@v4
+  formatter:
+    runs-on: self-hosted
+    steps:
+      - name: run formatter
+        run: deno fmt ${{github.workspace}}
