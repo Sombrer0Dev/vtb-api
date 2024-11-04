@@ -5,8 +5,8 @@ on: [push]
 
 jobs:
   formatter:
-  runs-on: self-hosted
-  steps:
-    - name: install deno
-      uses: denoland/setup-deno@v2
-    - run: deno fmt
+    runs-on: self-hosted
+    steps:
+      - name: install deno
+        uses: denoland/setup-deno@v2
+      - run: deno fmt
