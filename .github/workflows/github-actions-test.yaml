@@ -10,7 +10,7 @@ jobs:
       - name: install deno
         uses: denoland/setup-deno@v2
       - name: checkout repo
-        run: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
   formatter:
     runs-on: self-hosted
     steps:
