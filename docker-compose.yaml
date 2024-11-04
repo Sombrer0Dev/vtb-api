@@ -1,0 +1,9 @@
+services:
+  app:
+    container_name: vtb-api
+    image: ghcr.io/sombrer0dev/vtb-api:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: deno run --allow-net ./index.ts

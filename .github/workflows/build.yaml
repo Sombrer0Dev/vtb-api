@@ -1,0 +1,102 @@
+name: VTB API BUILD
+run-name: ${{ github.actor }} launched pipeline on ${{ github.ref}}
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
+
+jobs:
+  upload-release:
+    if: github.event.pull_request.merged == true
+
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: denoland/setup-deno@v2
+      - name: Compile project
+        run: |
+          deno compile --allow-net --target x86_64-pc-windows-msvc -o vtb_win.exe index.ts
+          deno compile --allow-net --target x86_64-unknown-linux-gnu -o vtb_linux index.ts
+          deno compile --allow-net --target aarch64-apple-darwin -o vtb_mac index.ts
+          zip -r vtb_win.zip vtb_win.exe
+          zip -r vtb_linux.zip vtb_linux
+          zip -r vtb_mac.zip vtb_mac
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{github.actor}}_${{ github.sha }}
+          release_name: Release ${{github.sha}}
+          body: New vtb-api release
+          draft: false
+          prerelease: false
+
+      - name: Upload win release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./vtb_win.zip
+          asset_name: vtb_win.zip
+          asset_content_type: application/zip
+      - name: Upload linux release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./vtb_linux.zip
+          asset_name: vtb_linux.zip
+          asset_content_type: application/zip
+      - name: Upload mac release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./vtb_mac.zip
+          asset_name: vtb_mac.zip
+          asset_content_type: application/zip
+
+  upload-docker-image:
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: vtb-api-app
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build . --tag ghcr.io/sombrer0dev/vtb-api:latest
+          docker push ghcr.io/sombrer0dev/vtb-api:latest
+
+  deploy-release:
+    needs: upload-docker-image
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Build and push Docker image
+        run: docker compose pull && docker compose up -d
