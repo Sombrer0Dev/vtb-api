@@ -2,7 +2,6 @@ name: VTB API CHECK
 run-name: ${{ github.actor }} launched pipeline on ${{ github.ref}}
 on: [push]
 
-
 jobs:
   formatter:
     runs-on: self-hosted
