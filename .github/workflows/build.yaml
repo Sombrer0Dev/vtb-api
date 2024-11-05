@@ -10,6 +10,7 @@ on:
 jobs:
   upload-release:
     if: github.event.pull_request.merged == true
+
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4.2.2
