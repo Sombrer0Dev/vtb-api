@@ -24,23 +24,18 @@ jobs:
           zip -r vtb_mac.zip vtb_mac
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{github.ref}}
-          body: Test
-          draft: false
-          prerelease: true
+          tag: ${{ github.ref_name}}
+        run: |
+          echo "RELEASE=$(gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="${GITHUB_REPOSITORY#*/} ${tag#v}" --generate-notes)"
 
       - name: Upload win release
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ env.RELEASE}}
           asset_path: ./vtb_win.zip
           asset_name: vtb_win.zip
           asset_content_type: application/zip
@@ -49,7 +44,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ env.RELEASE}}
           asset_path: ./vtb_linux.zip
           asset_name: vtb_linux.zip
           asset_content_type: application/zip
@@ -58,7 +53,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ env.RELEASE}}
           asset_path: ./vtb_mac.zip
           asset_name: vtb_mac.zip
           asset_content_type: application/zip
