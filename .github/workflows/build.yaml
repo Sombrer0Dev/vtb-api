@@ -33,7 +33,7 @@ jobs:
           release_name: Release ${{github.ref}}
           body: Test
           draft: false
-          prerelease: false
+          prerelease: true
 
       - name: Upload win release
         uses: actions/upload-release-asset@v1.0.1
