@@ -93,3 +93,11 @@ jobs:
           docker build . --tag ghcr.io/sombrer0dev/vtb-api:latest
           docker push ghcr.io/sombrer0dev/vtb-api:latest
 
+  deploy-release:
+    needs: upload-docker-image
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    steps:
+      - name: Build and push Docker image
+        run: docker compose pull && docker compose up -d
+
