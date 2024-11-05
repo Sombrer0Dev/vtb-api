@@ -8,7 +8,7 @@ on:
       - closed
 
 jobs:
-  if_merged:
+  upload-release:
     if: github.event.pull_request.merged == true
     runs-on: self-hosted
     steps:
