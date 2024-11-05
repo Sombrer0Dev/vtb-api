@@ -7,16 +7,14 @@ jobs:
   formatter:
     runs-on: self-hosted
     steps:
-      - name: setup
-        uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v4.2.2
       - uses: denoland/setup-deno@v2
       - name: run formatter
-        run: deno fmt ${{github.workspace}}
+        run: deno fmt --check
   linter:
     runs-on: self-hosted
     steps:
-      - name: setup
-        uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v4.2.2
       - uses: denoland/setup-deno@v2
       - name: run linter
-        run: deno lint ${{github.workspace}}
+        run: deno lint
