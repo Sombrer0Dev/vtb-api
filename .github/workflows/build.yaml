@@ -1,5 +1,5 @@
-name: VTB API CI/CD
-run-name: ${{ github.actor }} launched pipeline
+name: VTB API BUILD
+run-name: ${{ github.actor }} launched pipeline on ${{ github.ref}}
 on:
   pull_request:
     branches:
