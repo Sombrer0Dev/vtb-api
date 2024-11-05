@@ -92,4 +92,3 @@ jobs:
         run: |
           docker build . --tag ghcr.io/sombrer0dev/vtb-api:latest
           docker push ghcr.io/sombrer0dev/vtb-api:latest
-
