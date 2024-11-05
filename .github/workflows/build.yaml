@@ -63,6 +63,7 @@ jobs:
           asset_path: ./vtb_mac.zip
           asset_name: vtb_mac.zip
           asset_content_type: application/zip
+
   upload-docker-image:
     if: github.event.pull_request.merged == true
     runs-on: self-hosted
