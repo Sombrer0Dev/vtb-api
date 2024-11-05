@@ -10,6 +10,7 @@ on:
 jobs:
   upload-release:
     if: github.event.pull_request.merged == true
+
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4.2.2
@@ -62,6 +63,7 @@ jobs:
           asset_path: ./vtb_mac.zip
           asset_name: vtb_mac.zip
           asset_content_type: application/zip
+
   upload-docker-image:
     if: github.event.pull_request.merged == true
     runs-on: self-hosted
